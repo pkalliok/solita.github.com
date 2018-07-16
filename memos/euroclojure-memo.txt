@@ -1,0 +1,353 @@
+Euroclojure 2017 memo
+=====================
+
+Erlang/OTP
+----------
+
+- samat ohjelmointipatternit Clojureen kuin mitä on kokeiltu Erlangissa
+- virheenkäsittely yms lisätty core.asyncin päälle
+  - proc-defn + recur
+  - spawn, spawn-link
+  - supervisor processes with (process/flag :trap-exit true)
+- gen-server, a construct to provide a worker that responds to requests
+  (an in-process microservice)
+  - a protocol with init, handle-call, handle-cast
+  - state is passed on as handle-call / handle-cast third place
+  - gs/start-ns will find these from the current namespace?
+- supervisor patterns as gen-server behaviours
+  - basically, the supervisor tree plays the part of the cluster in a
+    microservice setup
+  - efficient microservices with a language lock and in-process
+    supervision (but no load balancing)
+- otplike does not yet run on clojurescript
+
+- there are so many programming models available!
+  - how to deal with state?
+  - whiteboards, join calculus, CSP, purity, etc
+- Suprematic is a Stuttgart-located IT house
+
+- TODO: take a look at ::keywords with automatic namespaces
+
+Return of Clojure data science
+------------------------------
+
+- Python and R are both, again, contestants
+- "production code was Clojure but data exploration was done in R"
+- outo kuva samplauksesta, jossa on 3 eri samplaustyyliä
+- muistikirjojen tärkeys
+  - beaker, Gorilla REPL, ehkä Jupiter (kernel)
+  - pitää saada REPL, josta tulee kaikki talteen (komennot + tulokset)
+  - workflow, josta pitää aina tulla jaettavaa kollegoille
+- Incanter, "data sorcery for Clojure"
+  - rewrite to use core.matrix, slowly dying off
+  - kinda overcomplicated?
+  - requires you to use its own data structures
+- Instead, use vectors of maps for relations
+- kixi.stats gives basic stuff (as transducers)
+  - more handy transducers in redux & friends
+- "Gaggle" data competitions: basic income for EU area
+- gg4clj and vector-of-maps-gorilla for visualisation
+- cramers-v for correlating nominal factors
+  - a lot of "(transduce identity (cramers-v ...) data)"
+- deeplearning4j and kixi.mallet for Clojure bindings
+- memory consumption: R is much better than Clojure
+  - but there's work to use transducers on Kafka streams 
+  - and other lazy constructions (where applicable) may help
+  - but... can you do covar matrices that way?
+
+- TODO: why transducers?  What are they good for?
+  - CPS for streams
+
+Moving people with Clojure
+--------------------------
+
+- an open services market platform?  GoJek
+  - customers are placing orders, producers ("drivers") can answer them.
+  - "Driver allocation"
+- From Java monolith -> Go service -> Clojure service
+  - "domain heavy code is hard to reason about"
+  - "adding new features is more important than the performance that Go
+    provided"
+  - Example: filter composition in Go and in Clojure
+  - ended up being 4kloc for logic, 4kloc for tests
+  - as opposed to Golang 6kloc (but few tests)
+- overhaul testing:
+  - by duplicating traffic to both services, and looking at the data
+  - generative testing
+    - "Schema provides generators, but we ended not using them because
+      they were much slower"
+  - use the implementations side-by-side
+- release: AOT compiled uberjar, monitoring
+- how to manage microservices?
+  - Hystrix monitoring
+  - stashd for metrics
+  - circuit breaker pattern for network failures
+- live configuration updates with etcd
+  - domain configuration (such as default search radius)
+  - a bit hard to draw the line between data and config?
+  - reason not to use a conventional DB: push updates
+  - config updates go through a node with (Schema) validation
+- reloads with mount
+  - just mount/start to start everything, that's what (main-) does
+- Either monad for error reporting
+  - a bit hacky, with variadic (bind) with an option to override fail-f
+    for that particular command only
+- Cultural teachings: managers don't care, coders are happy if they know
+  Clojure's values
+- effect on recruitment:
+  - GoJek clojure teaching
+  - recruiting Clojure people is hard in India, so converting existing
+    developers is better
+
+AI and Feynman machines in Clojure
+----------------------------------
+
+- Feynman machines: connecting a lot of components (variables?) as
+  differential equations
+  - one model of brain, but also can model sunbursts, weather cycles,
+    whatever.
+- GPU/CPU -> ogmaneo -> JNI -> Clj interop -> CLJOgmaNeo
+- reimplementing OgmaNeo with Neanderthal
+- good for temporal data, somehow better than recursive neural networks?
+- ilmeisesti tosi kunnioitettu puhuja, mut öö esitys on kyl aika
+  epävakuuttava
+
+Collaborative web software with ClojureScript
+---------------------------------------------
+
+- CREPL: collaborative REPL
+- niin kuin etherpad, jossa eval (joka muokkaa etherpadia kommenteilla)
+- crepl/atom-sync tuottaa lähdekoodiin atomin, jonka (teksti) sisältö
+  päivittyy lähdekoodissa, kun atomin sisältö päivittyy runtimessa
+- paljon selitystä OT:sta
+  - ei tarvetta varsinaiselle hajautetulle tietorakenteelle, koska
+    arbitraationoodi on joka tapauksessa olemassa
+  - Mutta: OT:n oikeastaan täytyy olla toteutettu sekä serverissä että
+    clientissa -> sama toteutuskieli tärkeä?
+- generatiivisen testauksen mainostusta
+- tähän voisi puhua dependent tyypeistäkin
+- mitä sellaista voisi keksiä, mikä _oikeasti_ parantaisi koodaajien
+  tuottavuutta?  Millainen yhteistyö-ympäristö, tarvitaanko reflektiota?
+
+Clojure tools for symbolic AI
+-----------------------------
+
+- datastructure pattern matcher, reminescent of data query languages
+  (Datalog)
+- operator search
+  - strips (str institute problem solver)
+  - search a path of operations that will take you from an initial state
+    to a goal
+  - microplanner
+  - shrdlu and shrep
+  - implemented as a breadth-search that takes init, goal and LMG (legal
+    move generator)
+- bridge fact databases and microplanner: operations are stated as rules
+  of (list of preconds, list of removed state, list of added state)
+  - precond is basically a fact both removed and added
+- inference: producing consequences from precedents
+- combining everything
+  - parser to generate intent
+  - information queries with the matcher to get intent -> goal (wanted
+    end state)
+  - planner to find actions for goal
+  - executor for the plan
+- very very much skipped work, A* search, stuff
+
+- handle infinite consequences?
+- why list deletions in preconditions?
+
+Dependency heaven
+-----------------
+
+- semver-mainostusta
+- ylipäänsä versiointi: vaadi vähemmän, tarjoa enemmän, ei toisinpäin
+  - alussa kannattaa vaatia mahdollisimman paljon
+  - alussa vähän tarjoaminen on paljon helpompaa
+- käytä uusia nimiä kun asiat rikkoutuvat
+  - uusi funktio tai uusi kirjasto tai nimiavaruus
+- on tyhmää, että Clojure pakottaa bundlaamaan artefakteiksi, koska ei
+  oikeasti piittaa niistä (eikä sitä tarvitse edes kääntää)
+- semver on rikki maven/leiningenissa koska major versioiden pitäisi
+  olla eri nimiavaruuksissa
+  - lisäksi tietysti ihmiset voisivat oikeasti noudattaa semveriä
+- clojure1.9 on monta .jarria
+  - aina vain enemmän käyttöä pomegranate-pohjaiselle riippuvuuksien
+    hallinnalle
+- milloin useammissa kohdissa classpathia on sama nimi?
+  - mitä vittua partial overrides classpathilla?
+- clj-skripti, joka kutsuu java -cp ... clojure.main
+  - lukee dependencyt .edn:stä :O
+  - duplikoi leiningenin toimintaa
+  - mutta: ei compile, package, deploy
+- clojure-install
+  - bootstrappaa tools.deps.alpha:n classpathin
+  - asentaa jutut (Mavenilla esim.)
+  - tools.deps.alpha on se, mitä clj käyttää bootstrapatakseen
+    clojure-ohjelman classpathin
+
+- eikö voisi vaan bundlata pomegranaten?
+- eikö voisi vaan olla vakiopaikka, josta kaikki clojure-koodi löytyy?
+
+Probabilistic programming in Anglican
+-------------------------------------
+
+- Niels has background in forecasting volcanic eruptions
+- Stan for probab programming (distribution data types)
+  - Bayes' theorem for improving predictions of probabilities
+  - take prior distribution and produce posterior distribution based on
+    evidence
+  - Good for inferring something from (very) incomplete data
+- as compared to deep learning, it's _not_ "magic" (is well understood)
+- random sampling as a scaling solution, pick the samples with biggest
+  probabilities (after calculation)
+- AB-testaus lääketestikohorteissa vs konversiotutkimuksessa
+- (uniform-continuous 0 1) = "uninformed prior"
+- kokeilu arvata fysiikkaparametreja pallon tippumisten tulosten
+  perusteella
+- Quil(?) mainittu visualisointiin
+- Bayadera, Stan, PyMC, (WebPPL for JS, BayesDB)
+- "Doing Bayesian Data Analysis" by John K. Kruschke, "Bayesian Methods
+  for Hackers" by Cameron Davidson-Pilon
+
+- TODO: what are the data types for PPS?  What does defquery compile
+  into?
+  - probabilistic model: function from distribution parameters to a
+    sample
+  - probability distribution: object with (sample), (score) and
+    something log-normal
+
+Spec <3 data structures
+-----------------------
+
+- types of contracts
+  - relationships between input and output of functions
+  - performance guarantees
+  - structural sharing guarantees
+- these can and have been violated
+  - PersistentHashMap 2013: marginal shrinking conditions lead to some
+    contracts being violated
+  - data.avl miscount bug on a special case of split (again manifesting
+    only on later usage)
+  - discovered by gen tests, but invariant tests also uncovered a
+    potential performance problem with improper balancing
+- black-box gen tests for contract compliance
+- benchmarks for performance (input size vs time taken)
+- white-box gen tests for internal invariants
+- invariant testing indispensable in author's experience
+- data structure black-box generation vs white-box generation
+  - bb gen = calling public APIs to build the data structure
+  - wp gen with spec = make map reps of data structures with spec,
+    convert them to the actual data structure.
+- s/with-gen generates random instances that fulfill a given predicate,
+  which means the generation has to be narrow enough to
+  probabilistically hit the predicate
+- in generating deep BST, there might be very real space constraints
+- note: is there sometimes need to make tests sloppy so that they will
+  not break on every difference in behaviour?
+  - what is the right amount of sloppiness?
+- testing generators (?) with Spec type checking
+- note: spec type predicates can be used for arbitrary combining of
+  predicates!
+- parameterised specs would be handy to check context-dependent
+  invariants (much in the same vein as dependent grammars do)
+
+- TODO: gen testing for FSA!
+
+Simple and secure
+-----------------
+
+- security = teamwork + review
+  - maintain the code
+  - follow sec advisories
+    - but again: why do we have so specific deps?
+  - keep it simple
+- note: is it not the point that dependent components can be updated
+  separately to fix bugs?
+- OWASP top 10 selitettynä Clojure-esimerkein
+- hiccup viimeinkin sai sen HTML:n escapen (2.0.0-alpha1)
+- tutustutus buddyyn etc
+- what about generative testing Ring handlers?
+
+Rethink distributed systems
+---------------------------
+
+- "architecture diagram has the drawback that it visually shows a
+  border"
+  - "we even arrange teams along this grouping"
+- pointti: pitäisi ajatella hajautettua järjestelmää yhtenä isona
+- mutta: miten sitten abstraktio pitäisi toteuttaa, eikö rajapintojen
+  määrittäminen (ja testaus) ole keskeinen osa?
+- mikroservicejen yhdistämistä koodiduplikaation vähentämiseksi
+- spec for incoming, outgoing messages, and application state
+- lein-monolith to start many projects in a single JVM
+- Mitä rajoja oikeastaan pitäisi murtaa?
+  - ei selvää vastausta, mutta "selvästi abstraktiot ovat hyödyllisiä"
+
+- TODO: katso taas devcards
+
+Launching 1.1M users on Android and iOS with ClojureScript
+----------------------------------------------------------
+
+- for: quick development, shared codebase between platforms, don't use
+  Obj-C/Java, access native features, get native experience
+- there's very many different shades of hybrid apps
+  - website wrapper: easy, a lot of code sharing, bad UX
+  - semi-native with some native, some web views
+  - almost native, but cross-platform (Xamarin, RN)
+  - importance of moving quickly: visibility on appstores
+- importance of getting something on the screen when the platform is not
+  familiar
+- the only downside with RN: the language :)
+- "ClojureScript for Skeptics" by Derek Slager
+- vakuuttava demo siitä, että tämä 3 kk:ssa RN:lla tehty appis näyttää
+  (ja tuntuu?) natiivilta
+  - 1mo for development, 2mo for getting rid of UX glitches
+- Transit important for serialising messages
+- CodePush makes it possible to make applications update themselves
+  - Appstore updates are "too slow" to get everything working, cause a
+    long tail of backwards compatibility
+- help with the tooling coming out, maybe
+  - but: when will this combination actually have the kind of momentum
+    to hone it out?
+
+Unraveling the REPL
+-------------------
+
+- a REPL that shows "tooltip-like" information (function docs,
+  intermediate results)
+- esittelee projektia johon halutaan osallistujia
+- unrepl on kuin nrepl mutta tuore, kommunikoi tietorakenteita tekstin
+  sijaan
+  - mitä REPLin kannattaa kommunikoida suuntaan ja toiseen?
+- REPL ja koko tooling voisi olla niin paljon parempi!
+
+Microservices with linkerd and Vase
+-----------------------------------
+
+- Conway's law: social systems "bleed into" technical systems,
+  reproducing the social organisation graph
+- what does this mean with microservices?
+  - does it reflect an org structure with many relatively independent
+    teams?
+- Vase combines datomic norms, core.spec schemata and pedestal APIs
+  - to produce data-driven microservices
+  - The definition of the service is given declaratively in a data
+    structure
+  - but there might be arbitrary interceptors which are clojure code and
+    need to be loaded
+- how to collect information about what is going on?
+- how to handle all the special situations?
+- linkerd is a transparent proxy, playing the role of nginx?
+
+Generative programming and verification
+---------------------------------------
+
+- paljon selitystä Scalan optimoinnista
+- Rep-tietotyyppi joka on "promise", erilaiset operaatiot automaattisesti
+  tuottavat yksinkertaisista promiseista monimutkaisia
+- voiko tästä oikeasti olla jotain hyötyä suoritusteholle?
+- code generation and verification that it does what it should
+- widely off-mark, but an interesting application of using types to
+  defer compilation
+
