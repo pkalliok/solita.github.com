@@ -1,0 +1,9 @@
+.pagination {
+  @media (min-width: $breakpoint-3) {
+    text-align: center;
+  }
+}
+
+.pagination-item {
+  margin: 0 0.25em;
+}

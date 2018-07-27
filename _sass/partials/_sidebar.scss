@@ -1,0 +1,30 @@
+.sidebar {
+  *:first-child {
+    margin-top: 0;
+  }
+
+  h4, h5 {
+    margin-bottom: 1em;
+  }
+
+  .none {
+    text-align: center;
+  }
+
+  .empty {
+    border: 2px dashed $brand-gray80;
+    border-radius: 6px;
+    font-size: 0.75em;
+    line-height: $baseline;
+    padding: ($baseline - 4px)/2 0;
+    width: auto;
+  }
+
+  .hidden {
+    display: none;
+  }
+}
+
+.some-icons {
+  margin-bottom: 1em;
+}

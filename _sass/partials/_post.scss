@@ -1,0 +1,84 @@
+.post {
+  margin-bottom: $baseline*2;
+  position: relative;
+}
+
+.post-title {
+  margin: 0 0 0.5em;
+  /* h2 + bold */
+  font-family: "Sharp Sans Bold", Century Gothic Bold, Arial Bold, sans-serif;
+}
+
+$post-meta-big-image-size-desktop: 80px;
+$post-meta-small-image-size-desktop: 40px;
+
+.post-meta {
+  display: flex;
+
+  .avatar {
+    padding-right: 14px;
+
+    @media (min-width: $breakpoint-3) {
+      padding-right: 18px;
+    }
+  }
+}
+
+.post-meta-tag {
+  margin-right: 5px;
+}
+
+.post-meta-basic-info {
+  margin-bottom: 0.1em;
+}
+
+.post-meta-small {
+  .avatar {
+    img {
+      max-width: $post-meta-small-image-size-desktop;
+    }
+  }
+}
+
+.post-meta-big {
+  margin-bottom: 1em;
+
+  .post-meta-basic-info {
+    margin-top: ($post-meta-big-image-size-desktop / 2) - 20px;
+  }
+
+  .avatar {
+    img {
+      max-width: $post-meta-big-image-size-desktop;
+    }
+  }
+}
+
+.post-excerpt,
+.post-content > p,
+.post-content > ul,
+.post-content > ol,
+.post-content > blockquote,
+.post-content td,
+.post-content th,
+.post-content caption {
+  font-size: 1rem;
+  line-height: $baseline;
+}
+
+.post-excerpt {
+  margin-bottom: 0.5em;
+}
+
+.caption {
+  font-style: italic;
+  text-align: center;
+}
+
+p + .caption {
+  margin-top: -$baseline/2;
+}
+
+.post-content {
+  margin-bottom: $baseline*2;
+}
