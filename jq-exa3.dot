@@ -1,0 +1,8 @@
+digraph ex3 {
+ rankdir=LR;
+ a [label=".[]"];
+ b [label=".[]"];
+ input -> a [label="[[1,2],[3],[4,5,6]]"]
+ a -> b [label="3 results: [1,2] [3] [4,5,6]"];
+ b -> output [label="6 results: 1 2 3 4 5 6"];
+}

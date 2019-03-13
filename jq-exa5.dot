@@ -1,0 +1,19 @@
+digraph ex5 {
+ rankdir=LR;
+ a [label=".[]"];
+ b [label=".[]"];
+ input -> a [label="[[1,2],[3],[4,5,6]]"]
+ a -> b [label="[1,2] [3] [4,5,6]"];
+ b -> select [label="1 2 3 4 5 6"];
+ "== (dispatch)" -> select [dir=back; label="1 2 3 4 5 6"];
+ "== (dispatch)" -> "mod (dispatch)" [label="1 2 3 4 5 6"];
+ "== (dispatch)" -> 0 [label="1 2 3 4 5 6"];
+ "mod (dispatch)" -> "." [label="1 2 3 4 5 6"];
+ "mod (dispatch)" -> 2 [label="1 2 3 4 5 6"];
+ "." -> mod [label="1 2 3 4 5 6"];
+ 2 -> mod [label="2 2 2 2 2 2"];
+ mod -> "==" [label="1 0 1 0 1 0"];
+ 0 -> "==" [label="0 0 0 0 0 0"];
+ select -> "==" [dir=back; label="false true false true false true"];
+ select -> output [label="2 4 6"];
+}

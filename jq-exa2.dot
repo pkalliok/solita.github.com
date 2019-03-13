@@ -1,0 +1,6 @@
+digraph ex2 {
+ rankdir=LR;
+ input -> ".[]" [label="[{foo:3},{foo:4},...]"];
+ ".[]" -> ".foo" [label="{foo:3} {foo:4} ..."];
+ ".foo" -> output [label="3 4 ..."];
+}

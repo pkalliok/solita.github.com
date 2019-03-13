@@ -1,0 +1,6 @@
+digraph ex1 {
+ rankdir=LR;
+ input -> ".foo" [label="{foo:{bar:1,...},...}"];
+ ".foo" -> ".bar" [label="{bar:1,...}"];
+ ".bar" -> output [label="1"];
+}
